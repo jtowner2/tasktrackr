@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		@font-face {
+			font-family: 'BitendDemo-Standard';
+			src: url('BitendDEMO.otf');
+		}
+		* {
+			font-family: 'BitendDemo-Standard';
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			background-color: #f9f9f9;
+			font-size: 16px;
+		}
+		.header {
+			width: 100%;
+			background-color: #333;
+			color: white;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 15px;
+		}
+		.header h1 {
+			font-size: 24px;
+		}
+		.main-content {
+			padding: 20px;
+		}
+		.task-list {
+			list-style-type: none;
+			padding: 0;
+		}
+		.task-list li {
+			padding: 10px;
+			background-color: #fff;
+			margin: 5px 0;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+		.task-list li:hover {
+			background-color: #e0e0e0;
+		}
+		.task-details {
+			margin-top: 20px;
+			background-color: #f0f0f0;
+			padding: 15px;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<h1>Task Details</h1>
+	</div>
+
+	<div class="main-content">
+		<ul class="task-list" id="taskList"></ul>
+		<div class="task-details" id="taskDetails">
+			<h3>Task Details</h3>
+			<p><strong>Name:</strong> <span id="taskName">Select a task</span></p>
+			<p><strong>Description:</strong> <span id="taskDescription">N/A</span></p>
+			<p><strong>Date:</strong> <span id="taskDate">N/A</span></p>
+		</div>
+	</div>
+
+	<script>
+		// Sample tasks data for local storage simulation
+		const tasks = {
+			1: { task_name: "Meeting with team", task_description: "Discuss project updates", task_date: "2024-02-14" },
+			2: { task_name: "Submit report", task_description: "Complete and submit project report", task_date: "2024-02-14" },
+			3: { task_name: "Client call", task_description: "Call with the client to discuss feedback", task_date: "2024-02-15" }
+		};
+
+		// Save tasks to local storage (for simulation purposes)
+		localStorage.setItem("taskDetails", JSON.stringify(tasks));
+
+		// Retrieve tasks from local storage
+		const savedTasks = JSON.parse(localStorage.getItem("taskDetails")) || {};
+
+		// Populate the task list dynamically
+		const taskList = document.getElementById("taskList");
+		Object.keys(savedTasks).forEach(taskId => {
+			const taskItem = document.createElement("li");
+			taskItem.textContent = savedTasks[taskId].task_name;
+			taskItem.setAttribute("data-task-id", taskId);
+			taskList.appendChild(taskItem);
+
+			// Add click event to display task details
+			taskItem.addEventListener("click", () => showTaskDetails(taskId));
+		});
+
+		// Display task details in the designated area
+		function showTaskDetails(taskId) {
+			const task = savedTasks[taskId];
+			document.getElementById("taskName").textContent = task.task_name;
+			document.getElementById("taskDescription").textContent = task.task_description;
+			document.getElementById("taskDate").textContent = task.task_date;
+		}
+	</script>
+</body>
+</html>

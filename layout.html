@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Layout - tasktrackr</title>
+	<!-- Load Roboto from Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	<style>
+		/* Apply Roboto font */
+		* {
+			font-family: 'Roboto', Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			background-color: #f4f4f4;
+			font-size: 16px;
+			line-height: 1.5;
+		}
+		.header {
+			width: 100%;
+			background-color: #333;
+			color: white;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 15px 0;
+		}
+		.header h1 {
+			font-size: 24px;
+		}
+		.container {
+			display: flex;
+			height: calc(100vh - 150px);
+		}
+		.sidebar {
+			width: 200px;
+			background-color: #2c2c2c;
+			color: white;
+			padding: 15px;
+		}
+		.sidebar a {
+			display: block;
+			padding: 10px;
+			margin-bottom: 10px;
+			color: white;
+			text-decoration: none;
+			font-weight: bold;
+			border-radius: 5px;
+		}
+		.sidebar a:hover {
+			background-color: #444;
+		}
+		.mainContent {
+			flex: 1;
+			background-color: #fff;
+			padding: 20px;
+			overflow-y: auto;
+		}
+		.calendar-container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.calendar-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		.calendar-header button {
+			padding: 8px 16px;
+			background-color: #f0f0f0;
+			color: #333;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.calendar {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			gap: 10px;
+			background-color: #eee;
+			padding: 20px;
+			border-radius: 5px;
+		}
+		.calendar-day {
+			padding: 15px;
+			text-align: center;
+			background-color: #fff;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		.calendar-day-header {
+			font-weight: bold;
+			color: #444;
+		}
+		.task-name {
+			display: block;
+			margin-top: 5px;
+			font-size: 14px;
+			color: #333;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<h1>tasktrackr Calendar</h1>
+	</div>
+
+	<div class="container">
+		<div class="sidebar">
+			<div class="profile-name" id="profileName">User</div>
+			<a href="home.html">Home</a>
+			<a href="calendar.html">Calendar</a>
+			<a href="aboutus.html">About Us</a>
+			<a href="register.html">Register</a>
+			<a href="members.html">Members</a>
+		</div>
+
+		<div class="mainContent">
+			<div class="calendar-container">
+				<div class="calendar-header">
+					<button onclick="changeMonth(-1)">Prev</button>
+					<div id="calendarMonthYear"></div>
+					<button onclick="changeMonth(1)">Next</button>
+				</div>
+				<div class="calendar" id="calendarGrid"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Display username if set
+		const profileName = document.getElementById('profileName');
+		const username = localStorage.getItem('username') || 'Guest';
+		profileName.textContent = username;
+
+		// Task data (mock data saved in local storage)
+		const tasks = JSON.parse(localStorage.getItem('tasks')) || {};
+
+		// Display month and year
+		let currentMonth = new Date().getMonth();
+		let currentYear = new Date().getFullYear();
+
+		function renderCalendar(month, year) {
+			const calendarGrid = document.getElementById("calendarGrid");
+			calendarGrid.innerHTML = "";
+
+			const monthYearLabel = document.getElementById("calendarMonthYear");
+			monthYearLabel.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
+
+			const firstDay = new Date(year, month, 1).getDay();
+			const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+			// Display days of the week
+			const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+			daysOfWeek.forEach(day => {
+				const dayHeader = document.createElement("div");
+				dayHeader.classList.add("calendar-day", "calendar-day-header");
+				dayHeader.textContent = day;
+				calendarGrid.appendChild(dayHeader);
+			});
+
+			// Fill in blank days at the start of the month
+			for (let i = 0; i < firstDay; i++) {
+				const emptyCell = document.createElement("div");
+				emptyCell.classList.add("calendar-day");
+				calendarGrid.appendChild(emptyCell);
+			}
+
+			// Fill in days of the month
+			for (let day = 1; day <= daysInMonth; day++) {
+				const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+				const dayCell = document.createElement("div");
+				dayCell.classList.add("calendar-day");
+				dayCell.textContent = day;
+
+				// Display tasks on the calendar day if they exist
+				if (tasks[dateKey]) {
+					tasks[dateKey].forEach(task => {
+						const taskName = document.createElement("span");
+						taskName.classList.add("task-name");
+						taskName.textContent = task;
+						dayCell.appendChild(taskName);
+					});
+				}
+				calendarGrid.appendChild(dayCell);
+			}
+		}
+
+		function changeMonth(direction) {
+			currentMonth += direction;
+			if (currentMonth < 0) {
+				currentMonth = 11;
+				currentYear--;
+			} else if (currentMonth > 11) {
+				currentMonth = 0;
+				currentYear++;
+			}
+			renderCalendar(currentMonth, currentYear);
+		}
+
+		// Initial calendar render
+		renderCalendar(currentMonth, currentYear);
+	</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Members - tasktrackr</title>
+
+    <!-- Load Roboto from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Apply the Roboto font to all elements */
+        body, input, button { 
+            font-family: 'Roboto', Arial, sans-serif; 
+        }
+        
+        body { background-color: #f4f4f4; margin: 0; }
+        .header { background-color: #333; color: white; padding: 15px; text-align: center; }
+        .container { display: flex; height: 100vh; }
+        .leftNav { width: 200px; background-color: #2c2c2c; color: white; padding: 15px; }
+        .leftNav a { display: block; color: white; text-decoration: none; margin: 10px 0; }
+        .mainContent { flex: 1; padding: 20px; background-color: #fff; overflow-y: auto; }
+        .footer { text-align: center; padding: 10px; background-color: #333; color: white; }
+        .memberContainer { text-align: center; }
+        .memberContainer h1 { font-size: 24px; margin-bottom: 15px; }
+        .memberList { list-style-type: none; padding: 0; margin-top: 20px; }
+        .memberList li { padding: 10px; border-bottom: 1px solid #ddd; margin: 5px 0; }
+        .editLink { color: #4CAF50; text-decoration: none; }
+        .editLink:hover { text-decoration: underline; }
+        .memberForm input, .memberForm button { padding: 10px; margin-top: 10px; width: 100%; }
+        .memberForm button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .memberForm button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>tasktrackr Members</h1>
+    </div>
+
+    <div class="container">
+        <div class="leftNav">
+            <p>Profile Name</p>
+            <a href="home.html">Home</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="aboutus.html">About Us</a>
+            <a href="register.html">Register</a>
+            <a href="members.html">Members</a>
+        </div>
+
+        <div class="mainContent">
+            <div class="memberContainer">
+                <h1>Members List</h1>
+
+                <!-- Member list rendered from the backend -->
+                <ul class="memberList" id="memberList">
+                    <!-- List items will be inserted here dynamically -->
+                </ul>
+            </div>
+
+            <!-- Edit Member Form -->
+            <div class="memberForm" id="editForm" style="display: none;">
+                <h2>Edit Member</h2>
+                <form method="POST" action="">
+                    <input type="hidden" id="member_id" name="member_id">
+                    <input type="text" id="name" name="name" placeholder="Name" required><br>
+                    <input type="email" id="email" name="email" placeholder="Email" required><br>
+                    <button type="submit" name="update_member">Update Member</button>
+                    <button type="button" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 by tasktrackr</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const members = [
+                { id: 1, name: "John Doe", email: "john@example.com" },
+                { id: 2, name: "Jane Smith", email: "jane@example.com" }
+            ];
+
+            const memberList = document.getElementById("memberList");
+            members.forEach(member => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${member.name} - ${member.email} <a href="#" class="editLink" onclick="editMember(${member.id}, '${member.name}', '${member.email}')">Edit</a>`;
+                memberList.appendChild(listItem);
+            });
+        });
+
+        function editMember(id, name, email) {
+            document.getElementById("member_id").value = id;
+            document.getElementById("name").value = name;
+            document.getElementById("email").value = email;
+
+            document.getElementById("editForm").style.display = "block";
+        }
+
+        function cancelEdit() {
+            document.getElementById("editForm").style.display = "none";
+        }
+    </script>
+</body>
+</html>
